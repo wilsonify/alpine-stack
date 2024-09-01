@@ -1,0 +1,14 @@
+
+FROM ghcr.io/wilsonify/alpine-stack-3.19-base:1.0.0
+LABEL org.opencontainers.image.source="https://github.com/wilsonify/alpine-stack"
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.description="Runtime container image for alpine-stack"
+
+ARG stack_id
+LABEL io.buildpacks.stack.id="${stack_id}"
+
+USER root
+RUN mkdir -p /app && chown ${CNB_USER_NAME} /app && chgrp ${CNB_USER_NAME} /app 
+
+# Set user and group (as declared in base image)
+USER ${CNB_USER_ID}:${CNB_GROUP_ID}
