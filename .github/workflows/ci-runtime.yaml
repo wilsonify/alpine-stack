@@ -10,6 +10,14 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        alpine-version:
+          - 3.16
+          - 3.17
+          - 3.18
+          - 3.19
+          - 3.20
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -22,8 +30,8 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build runtime
-        working-directory: alpine-3.16
-        run: docker build --progress=plain --platform=amd64 --tag "ghcr.io/wilsonify/alpine-stack-3.16-runtime:${{ env.VERSION }}" -f Dockerfile-runtime .
+        working-directory: alpine-${{ matrix.alpine-version }}
+        run: docker build --progress=plain --platform=amd64 --tag "ghcr.io/wilsonify/alpine-stack-${{ matrix.alpine-version }}-runtime:${{ env.VERSION }}" -f Dockerfile-runtime .
 
-      - name: Push build
-        run: docker push "ghcr.io/wilsonify/alpine-stack-3.16-runtime:${{ env.VERSION }}"
+      - name: Push runtime
+        run: docker push "ghcr.io/wilsonify/alpine-stack-${{ matrix.alpine-version }}-runtime:${{ env.VERSION }}"
